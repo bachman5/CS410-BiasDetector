@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.base import TransformerMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from work2vec.Tokenizer import Tokenizer as Toki
+from SVM_Model.work2vec.Tokenizer import Tokenizer as Toki
 
 
 # Custom transformer using spaCy

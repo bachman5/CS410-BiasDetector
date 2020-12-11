@@ -4,8 +4,8 @@ from os.path import isfile, join
 
 import pandas as pd
 from pymagnitude import MagnitudeUtils
-from work2vec.Tokenizer import Tokenizer as Toki
-from work2vec.config import *
+from SVM_Model.work2vec.Tokenizer import Tokenizer as Toki
+from SVM_Model.work2vec.config import *
 
 
 class Utils(object):
@@ -112,3 +112,71 @@ class Utils(object):
 
         return X_train, y_train, X_test, y_test, label_to_int, int_to_label
 
+    #Build corpus function for category data (news, L/R/trump)
+    @staticmethod
+    def build_corpus_and_data_all(dir: str):
+        files = listdir(dir)
+        with open(CORPUS_ALL_FF, 'w+') as fcorpus, open(ALL_FF, 'w+') as fAll:
+            for ff in files:
+                dd = join(dir, ff)
+                label = dd.replace('.csv', '').rsplit('_', 1)[1].lower()
+                titles = pd.read_csv(dd)[["title"]].to_records(index=False)  # return a tuble
+                print(dd)
+                if label == 'all':
+                    for tt in titles:
+                        try:
+                            if tt[0].strip():
+                                title = tt[0]
+                                fcorpus.write(Toki.normalize_text(title) + "\n")
+                        except:
+                            continue
+                else:
+                    for tt in titles:
+                        try:
+                            if tt[0].strip():
+                                title = tt[0].strip() + ' ' + label
+                                fAll.write(title + "\n")
+                        except:
+                            continue
+
+    # Create train/Test file function for category data (news, L/R/trump)
+    @staticmethod
+    def create_train_test_files(train_ff, test_ff, file_all):
+        label_to_title = dict()
+        with open(file_all, 'rb') as ff:
+            lines = [line.decode('utf-8') for line in ff.readlines()]
+        # print(lines[0])
+
+        for line in lines:
+            if line.strip():
+                whole_line = line.strip()
+                #print("Checking:" + whole_line + "////")
+                lable = whole_line.rsplit(' ', 1)[1]
+
+                if lable not in label_to_title:
+                    label_to_title[lable] = []
+                label_to_title[lable].append(whole_line)
+
+        labels_names = sorted(label_to_title.keys())
+        # separate train data & test data using ratio
+        cutoffs = [int(len(label_to_title[label]) * TRAIN_RATIO) for label in sorted(label_to_title)]
+        trains = []
+        tests = []
+        for name, cof in zip(labels_names, cutoffs):
+            gg = label_to_title[name]
+            trains += gg[:cof]
+            tests += gg[cof:]
+        random.shuffle(trains)
+        random.shuffle(tests)
+        for k, v in label_to_title.items():
+            print("Data: {} = {}".format(k, len(v)))
+        print("trains =", len(trains))
+        print("tests =", len(tests))
+
+        # now have 2 arrays trains & tests, we proceed to write them to respective files
+        with open(train_ff, 'w+') as ftrain:
+            for ll in trains:
+                ftrain.write(ll + "\n")
+        with open(test_ff, 'w+') as ftest:
+            for ll in tests:
+                ftest.write(ll + "\n")
