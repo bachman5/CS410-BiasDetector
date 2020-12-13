@@ -12,11 +12,11 @@ https://drive.google.com/file/d/1ycSjyZAlT915zT_RqlEKu-lhGaig8hyr/view?usp=shari
 
 Instructions for testing Rules_Model:
 
-$pip install nltk
+$pip3 install nltk
 
-$pip install numpy
+$pip3 install numpy
 
-$pip install pandas
+$pip3 install pandas
 
 $python3 sentiment_test.py
 
