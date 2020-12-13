@@ -8,9 +8,9 @@ from sklearn import metrics
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 
-from work2vec.Utils import Utils
-from work2vec.config import *
-from work2vec.text_processor import *
+from SVM_Model.work2vec.Utils import Utils
+from SVM_Model.work2vec.config import *
+from SVM_Model.work2vec.text_processor import *
 
 """
 Trying this method
@@ -40,9 +40,10 @@ def load_transformer(word2vec, X_train=None, y_train=None):
 
 
 def main_train():
+    #Utils.create_train_test_files(TRAIN_FF, TEST_FF, ALL_FF)
     X_train, y_train, X_test, y_test, label_to_int, int_to_label = Utils.read_train_test_data(TRAIN_FF, TEST_FF)
-    #print(X_train[296], '=', int_to_label(y_train[0]))
-    #print(X_test[296], '=', int_to_label(y_test[0]))
+    #print(X_train[0], '=', int_to_label(y_train[0]))
+    #print(X_test[296], '=', int_to_label(y_test[296]))
     #exit(0)
 
     """
