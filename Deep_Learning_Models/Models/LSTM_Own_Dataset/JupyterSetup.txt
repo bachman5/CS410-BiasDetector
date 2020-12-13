@@ -1,0 +1,8 @@
+Setup:
+
+1. Install conda or miniconda
+2. Install Jupyter Notebook: "conda install -c conda-forge notebook"
+2. Go to notebook directory in terminal
+3. Run command: "conda create -n tf anaconda python=3.6"
+4. Activate Environment: "conda activate tf"
+5. Install TensorFlow: "conda install -c conda-forge tensorflow"
