@@ -6,16 +6,16 @@ import difflib as dfl
 import spacy
 nlp = spacy.load("en_core_web_sm")
 
-#only need to run first time
-#try:
-#    _create_unverified_https_category = ssl._create_unverified_category
-#except AttributeError:
-#    pass
-#else:
-#    ssl._create_default_https_category = _create_unverified_https_category
+#Only need to run first time code the first time
+try:
+    _create_unverified_https_category = ssl._create_unverified_category
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_category = _create_unverified_https_category
 
-#nltk.download("vader_lexicon") # downloads vader_lexicon to /Users/nbachman/nltk_data
-#print("import nltk,vader and SentimentIntesity complete")
+nltk.download("vader_lexicon") # downloads vader_lexicon to /nltk_data
+print("import nltk,vader and SentimentIntesity complete")
 
 #Domain specific Heuristics
 #Create a Lexicon to determine if Democrat or Republican words are the topic (Theta)
@@ -44,7 +44,6 @@ vader.lexicon.update(POS_Lexicon)
 vader.lexicon.update(NET_Lexicon)
 
 #Function that determines if the Category is either Republican, Democrat, Both or None
-# Instead of comparing entire Title like in get_category, loop through each word and count the matches
 # This version of get_category rewards an early mention and penalizes a later mention.  Increased Accuracy by 5-7%
 def get_category(dataframe):
     results = []
@@ -94,40 +93,88 @@ def get_bias(df):
         results.append(row["Bias"])
     return results
 
-def measure_accuracy(Bias, PBias):
-    results = []
+def measure_accuracy(Bias, PBias, Category):
+    right_results = []
+    left_results = []
+    neutral_results = []
+
     for B, P in zip(Bias, PBias):
-        if B == P:
-            results.append("TP")    # If the results match, it's a True Positive
-        elif B == "Left" and P == "Right":
-            results.append("FP")   #If it the Bias is Left but the predicaitoin is Right then it's a False Possative
-        elif  B == "Right" and P == "Left":
-            results.append("FN")   #If theBias is Right and the prediciton is Left then it's a False Negative
-        elif B == "Neutral" and P == "Right":
-            results.append("FP")   #If it the Bias is Neutral but the predicaitoin is Right then it's a False Possative
-        elif  B == "Neutral" and P == "Left":
-            results.append("FN")   #If the Bias is Neutral and the prediciton is Left then it's a False Negative
+        if B == "Left" and P == "Left":  # Case when you correctly predicted the Left Category
+            left_results.append("TP") 
+            right_results.append("TN")
+            neutral_results.append("TN") 
+        elif  B == "Left" and P == "Right":  # Case when you falsely predicted the Right Category when it was Left
+            left_results.append("FN") 
+            right_results.append("FP")
+            neutral_results.append("TN")  
+        elif  B == "Left" and P == "Netural":  # Case when you falsely predicted the Neutral Category when it was Left
+            left_results.append("FN") 
+            right_results.append("TN")
+            neutral_results.append("FP")
+        elif  B == "Right" and P == "Right":  # Case when you correctly predicted it was Right
+            left_results.append("TN") 
+            right_results.append("TP")
+            neutral_results.append("TN")
+        elif  B == "Right" and P == "Left":  # Case when you falsely predicted it was Left what it was Right
+            left_results.append("FP") 
+            right_results.append("FN")
+            neutral_results.append("TN")
+        elif  B == "Right" and P == "Neutral":  # Case when you falsely predicted the Neutral Category when it was Right
+            left_results.append("TN") 
+            right_results.append("FN")
+            neutral_results.append("FP")  
+        elif  B == "Neutral" and P == "Neutral":  # Case when you correctly predicted it was Neutral
+            left_results.append("TN") 
+            right_results.append("TP")
+            neutral_results.append("TN")
+        elif  B == "Neutral" and P == "Left":  # Case when you falsely predicted it was Left what it was Neutral
+            left_results.append("FP") 
+            right_results.append("TN")
+            neutral_results.append("FN")
+        elif  B == "Neutral" and P == "Right":  # Case when you falsely predicted the Right Category when it was Neutral
+            left_results.append("TN") 
+            right_results.append("FP")
+            neutral_results.append("FN") 
         else: 
-            results.append("None")      # Case where Neither party is mentioned in the Title
-    return results
+            left_results.append("None") 
+            right_results.append("None")
+            neutral_results = ("None") 
+    
+    if Category == "R":
+        return right_results
+    if Category == "L":
+        return left_results
+    if Category == "N":
+        return neutral_results
+    else:
+        pass
 
 #Calculate the Precision, Recall and F1 Scores
 def get_accuracy(df):
-    tp = (df.Results == "TP").sum()
-    fp = (df.Results == "FP").sum()
-    fn = (df.Results == "FN").sum()
-    Precision = tp / (tp + fp)
-    Recall = tp / (tp + fn)
-    F1 = (2 * Precision * Recall) / (Precision + Recall)
-    Classification_Accuracy = tp / len(df)
-    print ("Precision=",Precision)
-    print ("Recall=",Recall)
-    print ("F1=", F1)
-    print ("Accuracy=",Classification_Accuracy)
+    r_tp = (df.Right_Results == "TP").sum()
+    r_fp = (df.Right_Results == "FP").sum()
+    r_fn = (df.Right_Results == "FN").sum()
+    R_Precision = r_tp / (r_tp + r_fp)
+    R_Recall = r_tp / (r_tp + r_fn)
+    R_f1 = (2 * R_Precision * R_Recall) / (R_Precision + R_Recall)
+    print ("R_Precision=",R_Precision)
+    print ("R_Recall=",R_Recall)
+    print ("R_F1=", R_f1)
+
+    l_tp = (df.Left_Results == "TP").sum()
+    l_fp = (df.Left_Results == "FP").sum()
+    l_fn = (df.Left_Results == "FN").sum()
+    L_Precision = l_tp / (l_tp + l_fp)
+    L_Recall = l_tp / (l_tp + l_fn)
+    L_f1 = (2 * L_Precision * L_Recall) / (L_Precision + L_Recall)
+
+    print ("L_Precision=",L_Precision)
+    print ("L_Recall=",L_Recall)
+    print ("L_F1=", L_f1)
 
 if __name__ == "__main__":
     #Initialize Pandas Dataframe with test data
-    df = pd.read_csv("CS410-BiasDetector/data_labeled/biasdetective2.csv")
+    df = pd.read_csv("CS410-BiasDetector/data_labeled/biasdetective1.csv")
 
     #Remove any extra quotes from the Titles for better matching
     df["Title"] = df["Title"].apply(lambda x: x.replace('"', ''))
@@ -137,7 +184,7 @@ if __name__ == "__main__":
     #Add a new Sentiment score column to dataframe 
     df["Scores"] = df["Title"].apply(lambda Title: vader.polarity_scores(Title))
 
-    #Add new compound value to the dataframe
+    #Add new Compound value to the dataframe
     df["compound"] = df["Scores"].apply(lambda score_dict: score_dict["compound"])
 
     #Add a new Sentiment column for pos, neg or neutral
@@ -149,11 +196,17 @@ if __name__ == "__main__":
     #Add a new Predicted Bias column to dataframe 
     df["Predicted_Bias"] = get_bias(df)
 
-    #Get the accuracy
-    df["Results"] = measure_accuracy(df["Bias"],df["Predicted_Bias"])
+    #Get the accuracy of the Right Category
+    df["Right_Results"] = measure_accuracy(df["Bias"],df["Predicted_Bias"], "R")
 
-    #Calculate the overall accuracy of the model
+    #Get the accuracy of the Left Category
+    df["Left_Results"] = measure_accuracy(df["Bias"],df["Predicted_Bias"], "L")
+
+    #Get the accuracy of the Neutral Category
+    df["Neutral_Results"] = measure_accuracy(df["Bias"],df["Predicted_Bias"], "N")
+
+    #Calculate the accuracy of the model using Precision, Recall and F1 per category
     get_accuracy(df)
 
     #Export Results to CSV file
-    df.to_csv("/Users/nbachman/Documents/HCP Anywhere/GradSchool/Text Mining and Analytics/CS410-BiasDetector/Rules_Model/results3.csv")
+    df.to_csv("results1.csv")
