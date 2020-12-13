@@ -18,7 +18,7 @@ $pip3 install numpy
 
 $pip3 install pandas
 
-$cd /Rules_Model
+$cd Rules_Model
 
 $python3 sentiment_test.py
 
