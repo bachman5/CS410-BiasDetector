@@ -1,7 +1,7 @@
 # CourseProject
 CS 410 Group Project- Bias Detectives
 
-At this point in the project, we have divided our work into three different technical approaches to determine which is the most accurate for our use case.  If you would like to test the code, clone this repo and follow the instructions below.  You can also download a video demo of Rules and SVM.  
+We have divided our work into three different technical approaches to determine which is the most accurate for our use case.  If you would like to test the code, clone this repo and follow the instructions below.  You can also download a video demo of Rules and SVM.  
 
 ------------------------------
 
