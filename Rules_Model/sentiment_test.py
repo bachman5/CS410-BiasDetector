@@ -3,10 +3,8 @@ import ssl
 import numpy as np
 import pandas as pd
 import difflib as dfl
-import spacy
-nlp = spacy.load("en_core_web_sm")
 
-#Only need to run first time code the first time
+#Only need to run the first time to download nltk_data
 try:
     _create_unverified_https_category = ssl._create_unverified_category
 except AttributeError:
