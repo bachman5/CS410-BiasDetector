@@ -174,7 +174,7 @@ def get_accuracy(df):
 
 if __name__ == "__main__":
     #Initialize Pandas Dataframe with test data
-    df = pd.read_csv("CS410-BiasDetector/data_labeled/biasdetective1.csv")
+    df = pd.read_csv("CS410-BiasDetector/data_labeled/All.csv")
 
     #Remove any extra quotes from the Titles for better matching
     df["Title"] = df["Title"].apply(lambda x: x.replace('"', ''))
@@ -209,4 +209,4 @@ if __name__ == "__main__":
     get_accuracy(df)
 
     #Export Results to CSV file
-    df.to_csv("results1.csv")
+    df.to_csv("results.csv")
