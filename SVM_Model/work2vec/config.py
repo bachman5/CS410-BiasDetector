@@ -16,9 +16,11 @@ TAR_REPUBLIC = 'republic'
 TRAIN_RATIO = 0.7
 
 LABELED_DATA_DIR = __file('../labeled_data/politics')
+RAW_DATA_DIR = __file('../../data_raw')
 #LABELED_DATA_DIR = __file('../labeled_data/airline')
 TRAIN_FF = __file('data/train.txt')
 TEST_FF = __file('data/test.txt')
+ALL_FF = __file('data/all.txt')
 
 CORPUS_TRAIN_FF = __file('data/corpus-train.txt')
 CORPUS_ALL_FF = __file('data/corpus-all.txt')

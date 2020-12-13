@@ -8,3 +8,17 @@ test.csv
 word_count.py
 news_test.py
 
+#ignore
+data_raw/*.txt
+.idea/
+**/__pycache__/
+**/data/*.txt
+
+.venv/
+SVM_Model/glove_genvecs/build/
+SVM_Model/glove_genvecs/*.bin
+SVM_Model/glove_genvecs/*.magnitude
+SVM_Model/glove_genvecs/*.txt
+SVM_Model/work2vec/corpus/*.magnitude
+SVM_Model/work2vec/model/*.pkl
+

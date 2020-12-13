@@ -9,3 +9,4 @@ pandas == 1.1.0
 ###### Requirements without Version Specifiers ######`
 lz4
 tabulate
+gensim
