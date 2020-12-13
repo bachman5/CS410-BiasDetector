@@ -40,11 +40,11 @@ $make test – test result
 
 ------------------------------
 
-# RNN_Model
+# Deep_Learning_Models
 
 Video Demo - None
 
-Instruction for testing SVM_Model: 
+Instruction for testing Deep_Learning_Models: 
 
 1. Install Jupyter Notebook: "pip install notebook"
 2. Go to notebook directory in terminal
